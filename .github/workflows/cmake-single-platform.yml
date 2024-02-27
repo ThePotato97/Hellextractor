@@ -33,15 +33,15 @@ jobs:
     - name: Generate Release Name, Tag, and Notes
       id: release_info
       run: |
-        $dateTag = Get-Date -Format "yyyyMMddHHmmss"
-        echo "RELEASE_TAG=$dateTag" | Out-File -Append -FilePath $env:GITHUB_ENV
-        $dateName = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
-        echo "RELEASE_NAME=Release-$dateName" | Out-File -Append -FilePath $env:GITHUB_ENV
-        $commitMessages = git log -5 --pretty=format:"%h - %s"
-
-        $releaseNotes = "Recent changes:`n$commitMessages"
-        echo "RELEASE_NOTES=$releaseNotes" | Out-File -Append -FilePath $env:GITHUB_ENV
+          $dateTag = Get-Date -Format "yyyyMMddHHmmss"
+          echo "::set-output name=tag::$dateTag"
+          $dateName = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+          echo "::set-output name=name::Release-$dateName"
+          $commitMessages = git log -5 --pretty=format:"%h - %s"
+          $releaseNotes = "Recent changes:`n$commitMessages"
+          echo "::set-output name=notes::$releaseNotes"
       shell: pwsh
+      
     
 
     - name: Create Release

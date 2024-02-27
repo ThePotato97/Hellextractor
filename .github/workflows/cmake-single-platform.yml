@@ -33,12 +33,13 @@ jobs:
     - name: Generate Release Name, Tag, and Notes
       id: release_info
       run: |
-        echo "RELEASE_TAG=$(date +'%Y%m%d%H%M%S')" >> $GITHUB_ENV
-        echo "RELEASE_NAME=Release-$(date +'%Y-%m-%d %H:%M:%S')" >> $GITHUB_ENV
-        # Get last 5 commit messages
-        COMMIT_MESSAGES=$(git log -5 --pretty=format:"%h - %s")
-        echo "RELEASE_NOTES=Recent changes:\n$COMMIT_MESSAGES" >> $GITHUB_ENV
-
+        $dateTag = Get-Date -Format "yyyyMMddHHmmss"
+        $dateName = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+        echo "RELEASE_TAG=$dateTag" | Out-File -Append -FilePath $Env:GITHUB_ENV
+        echo "RELEASE_NAME=Release-$dateName" | Out-File -Append -FilePath $Env:GITHUB_ENV
+        $commitMessages = git log -5 --pretty=format:"%h - %s"
+        echo "RELEASE_NOTES=Recent changes:`n$commitMessages" | Out-File -Append -FilePath $Env:GITHUB_ENV
+      
 
     - name: Create Release
       uses: softprops/action-gh-release@v1

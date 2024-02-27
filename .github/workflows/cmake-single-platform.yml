@@ -34,13 +34,17 @@ jobs:
       id: release_info
       run: |
           $dateTag = Get-Date -Format "yyyyMMddHHmmss"
-          echo "::set-output name=tag::$dateTag"
+          echo "tag=$dateTag" | Out-File -Append -FilePath $env:GITHUB_ENV
           $dateName = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
-          echo "::set-output name=name::Release-$dateName"
+          echo "name=Release-$dateName" | Out-File -Append -FilePath $env:GITHUB_ENV
           $commitMessages = git log -5 --pretty=format:"%h - %s"
+          echo "Commit messages: $commitMessages"  # Debugging line
           $releaseNotes = "Recent changes:`n$commitMessages"
-          echo "::set-output name=notes::$releaseNotes"
+          echo "Release notes: $releaseNotes"  # Debugging line
+          echo "notes=$releaseNotes" | Out-File -Append -FilePath $env:GITHUB_ENV
       shell: pwsh
+      
+      
       
     
 

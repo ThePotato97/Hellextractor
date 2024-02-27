@@ -27,15 +27,16 @@ jobs:
     
     - name: Make archive
       run: |
-        mkdir -p ${{github.workspace}}/package
-        cp ${{github.workspace}}/build/Release/Hellextractor.exe ${{github.workspace}}/package
-        cp ${{github.workspace}}/types.txt ${{github.workspace}}/package
-        cp ${{github.workspace}}/files.txt ${{github.workspace}}/package
-        cp ${{github.workspace}}/strings.txt ${{github.workspace}}/package
-        cp ${{github.workspace}}/README.adoc ${{github.workspace}}/package
-        cp ${{github.workspace}}/LICENSE.adoc ${{github.workspace}}/package
-        zip -r ${{github.workspace}}/hellextractor.zip ${{github.workspace}}/package/*
-      shell: bash
+        $workspace = "${{ github.workspace }}"
+        mkdir -p $workspace\package
+        cp $workspace\build\Release\Hellextractor.exe $workspace\package\
+        cp $workspace\types.txt $workspace\package\
+        cp $workspace\files.txt $workspace\package\
+        cp $workspace\strings.txt $workspace\package\
+        cp $workspace\README.adoc $workspace\package\
+        cp $workspace\LICENSE.adoc $workspace\package\
+        Compress-Archive -Path $workspace\package\* -DestinationPath $workspace\hellextractor.zip
+      shell: pwsh
     
 
     - name: Upload hellextractor Artifact

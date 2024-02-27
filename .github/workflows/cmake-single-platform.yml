@@ -34,11 +34,13 @@ jobs:
       id: release_info
       run: |
         $dateTag = Get-Date -Format "yyyyMMddHHmmss"
+        echo "RELEASE_TAG=$dateTag" | Out-File -Append -FilePath $env:GITHUB_ENV
         $dateName = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
-        echo "RELEASE_TAG=$dateTag" | Out-String | Foreach-Object {echo "##[set-output name=tag;]$_"}
-        echo "RELEASE_NAME=Release-$dateName" | Out-String | Foreach-Object {echo "##[set-output name=name;]$_"}
+        echo "RELEASE_NAME=Release-$dateName" | Out-File -Append -FilePath $env:GITHUB_ENV
         $commitMessages = git log -5 --pretty=format:"%h - %s"
-        echo "RELEASE_NOTES=Recent changes:`n$commitMessages" | Out-String | Foreach-Object {echo "##[set-output name=notes;]$_"}
+
+        $releaseNotes = "Recent changes:`n$commitMessages"
+        echo "RELEASE_NOTES=$releaseNotes" | Out-File -Append -FilePath $env:GITHUB_ENV
       shell: pwsh
     
 

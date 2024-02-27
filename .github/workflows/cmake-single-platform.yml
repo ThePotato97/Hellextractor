@@ -24,12 +24,25 @@ jobs:
 
     - name: Build
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+    
+    - name: Make archive
+      run: |
+        mkdir -p ${{github.workspace}}/package
+        cp ${{github.workspace}}/build/Release/Hellextractor.exe ${{github.workspace}}/package
+        cp ${{github.workspace}}/types.txt ${{github.workspace}}/package
+        cp ${{github.workspace}}/files.txt ${{github.workspace}}/package
+        cp ${{github.workspace}}/strings.txt ${{github.workspace}}/package
+        cp ${{github.workspace}}/README.adoc ${{github.workspace}}/package
+        cp ${{github.workspace}}/LICENSE.adoc ${{github.workspace}}/package
+        zip -r ${{github.workspace}}/hellextractor.zip ${{github.workspace}}/package/*
+      shell: bash
+    
 
     - name: Upload hellextractor Artifact
       uses: actions/upload-artifact@v4.3.1
       with:
         name: hellextractor
-        path: ${{github.workspace}}/build/Release/Hellextractor.exe
+        path: ${{github.workspace}}/hellextractor.zip
         if-no-files-found: error # Optional: 'warn', 'error', 'ignore'
       
     - name: Generate Release Name, Tag, and Notes
@@ -54,6 +67,6 @@ jobs:
         name: ${{ steps.release_info.outputs.name }}
         body: ${{ steps.release_info.outputs.notes }}
         files: |
-          build/Release/Hellextractor.exe
+          ${{github.workspace}}/hellextractor.zip
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

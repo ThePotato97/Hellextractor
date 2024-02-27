@@ -29,3 +29,17 @@ jobs:
         name: hellextractor
         path: ${{github.workspace}}/build/Release/Hellextractor.exe
         if-no-files-found: error # Optional: 'warn', 'error', 'ignore'
+
+    - name: Generate Changelog
+      id: changelog
+      uses: mikepenz/release-changelog-builder-action@v3
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: build/Release/Hellextractor.exe
+        body: ${{ steps.changelog.outputs.changelog }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -29,24 +29,25 @@ jobs:
         name: hellextractor
         path: ${{github.workspace}}/build/Release/Hellextractor.exe
         if-no-files-found: error # Optional: 'warn', 'error', 'ignore'
-
+      
     - name: Generate Release Name, Tag, and Notes
       id: release_info
       run: |
         $dateTag = Get-Date -Format "yyyyMMddHHmmss"
         $dateName = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
-        echo "RELEASE_TAG=$dateTag" | Out-File -Append -FilePath $Env:GITHUB_ENV
-        echo "RELEASE_NAME=Release-$dateName" | Out-File -Append -FilePath $Env:GITHUB_ENV
+        echo "RELEASE_TAG=$dateTag" | Out-String | Foreach-Object {echo "##[set-output name=tag;]$_"}
+        echo "RELEASE_NAME=Release-$dateName" | Out-String | Foreach-Object {echo "##[set-output name=name;]$_"}
         $commitMessages = git log -5 --pretty=format:"%h - %s"
-        echo "RELEASE_NOTES=Recent changes:`n$commitMessages" | Out-File -Append -FilePath $Env:GITHUB_ENV
-      
+        echo "RELEASE_NOTES=Recent changes:`n$commitMessages" | Out-String | Foreach-Object {echo "##[set-output name=notes;]$_"}
+      shell: pwsh
+    
 
     - name: Create Release
       uses: softprops/action-gh-release@v1
       with:
-        tag_name: ${{ env.RELEASE_TAG }}
-        release_name: ${{ env.RELEASE_NAME }}
-        body: ${{ env.RELEASE_NOTES }}
+        tag_name: ${{ steps.release_info.outputs.tag }}
+        release_name: ${{ steps.release_info.outputs.name }}
+        body: ${{ steps.release_info.outputs.notes }}
         files: |
           build/Release/Hellextractor.exe
       env:

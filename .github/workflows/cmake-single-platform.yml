@@ -18,7 +18,7 @@ jobs:
     - uses: actions/checkout@v4
       with:
         fetch-depth: 5
-        
+
     - name: Configure CMake
       run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
 
@@ -41,7 +41,7 @@ jobs:
           echo "dateName=$dateName" # for debugging
           echo "name=Release-$dateName" >> $GITHUB_OUTPUT
       
-          commitMessages=$(git log -5 --pretty=format:"%h - %s <br />")
+          commitMessages=$(git log -5 --pretty=format:"%h - %s <br />" | paste -sd ' ' -)
           echo "commitMessages=$commitMessages" # for debugging
           releaseNotes="Recent changes: <br />$commitMessages"
           echo "notes=$releaseNotes" >> $GITHUB_OUTPUT            

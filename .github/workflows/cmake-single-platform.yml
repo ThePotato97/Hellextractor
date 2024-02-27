@@ -30,33 +30,11 @@ jobs:
         path: ${{github.workspace}}/build/Release/Hellextractor.exe
         if-no-files-found: error # Optional: 'warn', 'error', 'ignore'
       
-    - name: Generate Release Name, Tag, and Notes
-      id: release_info
-      run: |
-        $dateTag = Get-Date -Format "yyyyMMddHHmmss"
-        echo "tag=$dateTag" | Out-File -Append -FilePath $env:GITHUB_ENV
-        $dateName = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
-        echo "name=Release-$dateName" | Out-File -Append -FilePath $env:GITHUB_ENV
-        $commitMessages = git log -5 --pretty=format:"%h - %s"
-        $encodedCommitMessages = [System.Uri]::EscapeDataString($commitMessages)
-        echo "Commit messages: $encodedCommitMessages"  # Debugging line
-        $releaseNotes = "Recent changes:`n$encodedCommitMessages"
-        $encodedReleaseNotes = [System.Uri]::EscapeDataString($releaseNotes)
-        echo "Release notes: $encodedReleaseNotes"  # Debugging line
-        echo "notes=$encodedReleaseNotes" | Out-File -Append -FilePath $env:GITHUB_ENV
-      shell: pwsh
-      
-      
-      
-    
-
-    - name: Create Release
-      uses: softprops/action-gh-release@v1
+    - uses: "marvinpinto/action-automatic-releases@latest"
       with:
-        tag_name: ${{ steps.release_info.outputs.tag }}
-        release_name: ${{ steps.release_info.outputs.name }}
-        body: ${{ steps.release_info.outputs.notes }}
+        repo_token: "${{ secrets.GITHUB_TOKEN }}"
+        automatic_release_tag: "latest"
+        prerelease: true
+        title: "Development Build"
         files: |
-          build/Release/Hellextractor.exe
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          Hellextractor.exe

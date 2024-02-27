@@ -29,3 +29,30 @@ jobs:
         name: hellextractor
         path: ${{github.workspace}}/build/Release/Hellextractor.exe
         if-no-files-found: error # Optional: 'warn', 'error', 'ignore'
+      
+    - name: Generate Release Name, Tag, and Notes
+      id: release_info
+      run: |
+          echo "tag=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+      
+          dateName=$(date +'%Y-%m-%d %H:%M:%S')
+          echo "name=Release-$dateName" >> $GITHUB_OUTPUT
+      
+          commitMessages=$(git log -5 --pretty=format:"%h - %s <br />")
+          releaseNotes="Recent changes: <br />$commitMessages"
+          echo "notes=$releaseNotes" >> $GITHUB_OUTPUT            
+      shell: bash
+      
+      
+    
+
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: ${{ steps.release_info.outputs.tag }}
+        name: ${{ steps.release_info.outputs.name }}
+        body: ${{ steps.release_info.outputs.notes }}
+        files: |
+          ${{github.workspace}}/build/Release/Hellextractor.exe
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

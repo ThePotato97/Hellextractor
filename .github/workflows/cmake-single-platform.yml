@@ -39,7 +39,7 @@ jobs:
           echo "dateName=$dateName" # for debugging
           echo "name=Release-$dateName" >> $GITHUB_OUTPUT
       
-          commitMessages=$(git log -5 --pretty=format:"%h - %s <br />")
+          commitMessages=$(git log -5 --pretty=format:"%h - %s <br />" | awk '{printf "%s\\n", $0}')
           echo "commitMessages=$commitMessages" # for debugging
           releaseNotes="Recent changes: <br />$commitMessages"
           echo "notes=$releaseNotes" >> $GITHUB_OUTPUT            

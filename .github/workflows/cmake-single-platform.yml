@@ -34,11 +34,13 @@ jobs:
       id: release_info
       run: |
           echo "tag=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
-      
+          
           dateName=$(date +'%Y-%m-%d %H:%M:%S')
+          echo "dateName=$dateName" # for debugging
           echo "name=Release-$dateName" >> $GITHUB_OUTPUT
       
           commitMessages=$(git log -5 --pretty=format:"%h - %s <br />")
+          echo "commitMessages=$commitMessages" # for debugging
           releaseNotes="Recent changes: <br />$commitMessages"
           echo "notes=$releaseNotes" >> $GITHUB_OUTPUT            
       shell: bash  

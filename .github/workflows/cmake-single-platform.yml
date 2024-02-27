@@ -43,7 +43,13 @@ jobs:
       uses: actions/upload-artifact@v4.3.1
       with:
         name: hellextractor
-        path: ${{github.workspace}}/hellextractor.zip
+        path: |
+          ${{github.workspace}}/package/Hellextractor.exe
+          ${{github.workspace}}/package/types.txt
+          ${{github.workspace}}/package/files.txt
+          ${{github.workspace}}/package/strings.txt
+          ${{github.workspace}}/package/README.adoc
+          ${{github.workspace}}/package/LICENSE.adoc
         if-no-files-found: error # Optional: 'warn', 'error', 'ignore'
       
     - name: Generate Release Name, Tag, and Notes
@@ -68,6 +74,7 @@ jobs:
         name: ${{ steps.release_info.outputs.name }}
         body: ${{ steps.release_info.outputs.notes }}
         files: |
-          ${{github.workspace}}/hellextractor.zip
+          hellextractor.zip
+        fail_on_unmatched_files: true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

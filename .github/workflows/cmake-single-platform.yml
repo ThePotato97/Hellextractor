@@ -33,15 +33,17 @@ jobs:
     - name: Generate Release Name, Tag, and Notes
       id: release_info
       run: |
-          $dateTag = Get-Date -Format "yyyyMMddHHmmss"
-          echo "tag=$dateTag" | Out-File -Append -FilePath $env:GITHUB_ENV
-          $dateName = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
-          echo "name=Release-$dateName" | Out-File -Append -FilePath $env:GITHUB_ENV
-          $commitMessages = git log -5 --pretty=format:"%h - %s"
-          echo "Commit messages: $commitMessages"  # Debugging line
-          $releaseNotes = "Recent changes:`n$commitMessages"
-          echo "Release notes: $releaseNotes"  # Debugging line
-          echo "notes=$releaseNotes" | Out-File -Append -FilePath $env:GITHUB_ENV
+        $dateTag = Get-Date -Format "yyyyMMddHHmmss"
+        echo "tag=$dateTag" | Out-File -Append -FilePath $env:GITHUB_ENV
+        $dateName = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+        echo "name=Release-$dateName" | Out-File -Append -FilePath $env:GITHUB_ENV
+        $commitMessages = git log -5 --pretty=format:"%h - %s"
+        $encodedCommitMessages = [System.Uri]::EscapeDataString($commitMessages)
+        echo "Commit messages: $encodedCommitMessages"  # Debugging line
+        $releaseNotes = "Recent changes:`n$encodedCommitMessages"
+        $encodedReleaseNotes = [System.Uri]::EscapeDataString($releaseNotes)
+        echo "Release notes: $encodedReleaseNotes"  # Debugging line
+        echo "notes=$encodedReleaseNotes" | Out-File -Append -FilePath $env:GITHUB_ENV
       shell: pwsh
       
       
